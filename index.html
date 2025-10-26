@@ -202,7 +202,14 @@ function renderRecent(){
 
 // Datos de detalle (movimientos, evoluciones, inates)
 const DETAILS = {
-  1: {evolution:{next:[{name:"Ivysaur",level:16}]}, level_up:[{level:1,move:"Tackle",type:"Normal",cat:"Physical",power:40,desc:"Ataque básico"}], inates:[{name:"Overgrow",desc:"Potencia movimientos Planta con HP bajo"}]},
+  1: {evolution:{next:[{name:"Ivysaur",level:16}]}, level_up:[{level:1,move:"Tackle",type:"Normal",cat:"Physical",power:40,desc:"Ataque básico"}], inates:[
+  {name:"Overgrow", desc:"Potencia movimientos Planta con HP bajo"},
+  {name:"Chlorophyll", desc:"Velocidad se duplica bajo sol"},
+  {name:"Leaf Guard", desc:"Evita estados alterados con sol"},
+  {name:"Run Away", desc:"Permite escapar fácilmente"},
+  {name:"Effect Spore", desc:"Puede causar sueño, parálisis o envenenamiento"},
+  {name:"Solar Power", desc:"Potencia Fuego con sol, pierde HP"}
+],
   4: {evolution:{next:[{name:"Charmeleon",level:16}]}, level_up:[{level:1,move:"Scratch",type:"Normal",cat:"Physical",power:40,desc:"Rasguño"}, {level:9,move:"Ember",type:"Fire",cat:"Special",power:40,desc:"Llamarada menor"}], inates:[{name:"Blaze",desc:"Potencia movimientos Fuego con HP bajo"}]},
   25: {evolution:{previous:{name:"Pichu"},next:{name:"Raichu",requirement:"Piedra Trueno"}} , level_up:[{level:1,move:"Thunder Shock",type:"Electric",cat:"Special",power:40,desc:"Pequeña descarga eléctrica"}], inates:[{name:"Static",desc:"Puede paralizar al atacante que haga contacto"}]}
 };
@@ -242,4 +249,5 @@ renderRecent();
   </script>
 </body>
 </html>
+
 
