@@ -130,3 +130,114 @@
       <div id="details-body"></div>
     </div>
   </div>
+  <script>
+const POKEMON_LIST = [
+  {id:1, num:"#001", name:"Bulbasaur", types:["grass","poison"], sprite:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"},
+  {id:2, num:"#002", name:"Ivysaur", types:["grass","poison"], sprite:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/2.png"},
+  {id:3, num:"#003", name:"Venusaur", types:["grass","poison"], sprite:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/3.png"},
+  {id:4, num:"#004", name:"Charmander", types:["fire"], sprite:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png"},
+  {id:5, num:"#005", name:"Charmeleon", types:["fire"], sprite:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/5.png"},
+  {id:6, num:"#006", name:"Charizard", types:["fire","flying"], sprite:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png"},
+  {id:7, num:"#007", name:"Squirtle", types:["water"], sprite:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png"},
+  {id:8, num:"#008", name:"Wartortle", types:["water"], sprite:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/8.png"},
+  {id:9, num:"#009", name:"Blastoise", types:["water"], sprite:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/9.png"},
+  {id:25, num:"#025", name:"Pikachu", types:["electric"], sprite:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"}
+];
+
+const pokedexEl = document.getElementById("pokedex");
+const searchInput = document.getElementById("search");
+const recentListEl = document.getElementById("recent-list");
+const detailsEl = document.getElementById("details");
+const detailsBody = document.getElementById("details-body");
+
+// Renderizar lista de Pokémon
+function renderPokedex(list){
+  pokedexEl.innerHTML = "";
+  list.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <img src="${p.sprite}" alt="${p.name}" width="80">
+      <h3>${p.num} ${p.name}</h3>
+      <div class="types">${p.types.map(t=>`<span class="type">${t}</span>`).join('')}</div>
+    `;
+    card.onclick = () => showDetails(p.id);
+    pokedexEl.appendChild(card);
+  });
+}
+
+// Filtro de búsqueda
+searchInput.addEventListener("input", ()=>{
+  const term = searchInput.value.toLowerCase();
+  const filtered = POKEMON_LIST.filter(p=>p.name.toLowerCase().includes(term) || p.num.includes(term));
+  renderPokedex(filtered);
+});
+
+// Manejo de búsquedas recientes
+function addRecent(id){
+  let recent = JSON.parse(localStorage.getItem("recent")||"[]");
+  recent = recent.filter(x=>x!==id);
+  recent.unshift(id);
+  if(recent.length>5) recent.pop();
+  localStorage.setItem("recent", JSON.stringify(recent));
+  renderRecent();
+}
+
+function renderRecent(){
+  const recent = JSON.parse(localStorage.getItem("recent")||"[]");
+  recentListEl.innerHTML = "";
+  if(recent.length===0){
+    recentListEl.innerHTML = "<span>No hay búsquedas recientes</span>";
+    return;
+  }
+  recent.forEach(id=>{
+    const p = POKEMON_LIST.find(x=>x.id===id);
+    if(!p) return;
+    const span = document.createElement("span");
+    span.textContent = p.name;
+    span.onclick = () => showDetails(p.id);
+    recentListEl.appendChild(span);
+  });
+}
+
+// Datos de detalle (movimientos, evoluciones, inates)
+const DETAILS = {
+  1: {evolution:{next:[{name:"Ivysaur",level:16}]}, level_up:[{level:1,move:"Tackle",type:"Normal",cat:"Physical",power:40,desc:"Ataque básico"}], inates:[{name:"Overgrow",desc:"Potencia movimientos Planta con HP bajo"}]},
+  4: {evolution:{next:[{name:"Charmeleon",level:16}]}, level_up:[{level:1,move:"Scratch",type:"Normal",cat:"Physical",power:40,desc:"Rasguño"}, {level:9,move:"Ember",type:"Fire",cat:"Special",power:40,desc:"Llamarada menor"}], inates:[{name:"Blaze",desc:"Potencia movimientos Fuego con HP bajo"}]},
+  25: {evolution:{previous:{name:"Pichu"},next:{name:"Raichu",requirement:"Piedra Trueno"}} , level_up:[{level:1,move:"Thunder Shock",type:"Electric",cat:"Special",power:40,desc:"Pequeña descarga eléctrica"}], inates:[{name:"Static",desc:"Puede paralizar al atacante que haga contacto"}]}
+};
+
+// Mostrar detalles
+function showDetails(id){
+  addRecent(id);
+  const p = POKEMON_LIST.find(x=>x.id===id);
+  const d = DETAILS[id];
+  let html = `<h2>${p.name} ${p.num}</h2>`;
+  html += `<div class="types">${p.types.map(t=>`<span class="type">${t}</span>`).join('')}</div>`;
+  if(d.evolution){
+    html += "<h3>Evoluciones</h3>";
+    if(d.evolution.previous) html += `<p>Prev: ${d.evolution.previous.name}</p>`;
+    if(d.evolution.next){
+      const nexts = Array.isArray(d.evolution.next)?d.evolution.next:[d.evolution.next];
+      nexts.forEach(n=> html += `<p>Next: ${n.name}${n.level?(" — Nivel "+n.level):""}${n.requirement?(" — "+n.requirement):""}</p>`);
+    }
+  }
+  if(d.inates && d.inates.length){
+    html += "<h3>Inates</h3>";
+    d.inates.forEach(i=> html += `<p><strong>${i.name}:</strong> ${i.desc}</p>`);
+  }
+  if(d.level_up && d.level_up.length){
+    html += "<h3>Movimientos por nivel</h3>";
+    d.level_up.forEach(m=> html += `<p>Nivel ${m.level}: ${m.move} (${m.type}, ${m.cat}, ${m.power}) — ${m.desc}</p>`);
+  }
+  detailsBody.innerHTML = html;
+  detailsEl.classList.add("active");
+}
+
+function closeDetails(){ detailsEl.classList.remove("active"); }
+
+// Inicializar
+renderPokedex(POKEMON_LIST);
+renderRecent();
+  </script>
+
