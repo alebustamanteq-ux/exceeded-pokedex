@@ -202,7 +202,14 @@ function renderRecent(){
 
 // Datos de detalle (movimientos, evoluciones, inates)
 const DETAILS = {
-  1: {evolution:{next:[{name:"Ivysaur",level:16}]}, level_up:[{level:1,move:"Tackle",type:"Normal",cat:"Physical",power:40,desc:"Ataque básico"}], inates:[
+  1: {evolution:{next:[{name:"Ivysaur",level:16}]}, level_up:[
+  {level:1, move:"Tackle", type:"Normal", cat:"Physical", power:40, desc:"Ataque básico"},
+  {level:3, move:"Growl", type:"Normal", cat:"Status", power:0, desc:"Reduce el Ataque del objetivo"},
+  {level:7, move:"Leech Seed", type:"Grass", cat:"Status", power:0, desc:"Planta semillas que absorben HP"},
+  {level:9, move:"Vine Whip", type:"Grass", cat:"Physical", power:45, desc:"Latigazo con lianas"},
+  {level:13, move:"Poison Powder", type:"Poison", cat:"Status", power:0, desc:"Puede envenenar al objetivo"},
+  {level:15, move:"Razor Leaf", type:"Grass", cat:"Physical", power:55, desc:"Corte con hojas afiladas"}
+], inates:[
   {name:"Overgrow", desc:"Potencia movimientos Planta con HP bajo"},
   {name:"Chlorophyll", desc:"Velocidad se duplica bajo sol"},
   {name:"Leaf Guard", desc:"Evita estados alterados con sol"},
@@ -249,5 +256,6 @@ renderRecent();
   </script>
 </body>
 </html>
+
 
 
